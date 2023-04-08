@@ -1,17 +1,42 @@
 //Sistema de turnos
-#include <limits.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #define SIZE 10
-
-// Una estructura de la pila
+/*
 struct Pila {
 	int top;
   unsigned capacity;;
 	int* array;
 };
+*/
+// Una estructura de la pila
+int pila[SIZE+1];
 
+//Agregar dato
+void push(int dato) {
+    static int tope = 0;
+    if (tope >= SIZE) {
+        printf("Ya no hay turnos disponibles... \n");
+        exit(1);
+    }
+    for (int i = 1; i <= SIZE; i++) {
+        push(SIZE - i + 1);
+    }
+    pila[++tope] = dato;
+}
+
+//Borrar dato
+int pop() {
+    static int tope = 1;
+    if (tope > SIZE) {
+        printf("Error: la pila está vacía\n");
+        exit(1);
+    }
+    return pila[tope++];
+}
+/*
 // Funcion para asignar capacidad.
 struct Pila* crearPila(unsigned capacity)
 {
@@ -50,26 +75,77 @@ int pop(struct Pila* pila)
 		return INT_MIN;
 	return pila->array[pila->top--];
 }
+*/
+
 
 int main(){
 
-char nombre;
-short opcion = 0, contador;
-
-printf("\n\tBienvenido, como lo podemos ayudar?\n");
-    for (contador=0 ; contador<10; contador++)
+    char nombre;
+    int opcion = 0;
+    
+    printf("\n\tBienvenido, como lo podemos ayudar?\n");
     printf("\nElegir una opción:\n");
-    printf("1) Formarse\t2) Salir.\n");
+    printf("1) Formarse\n2) Salir.\n");
     printf("\n->");
     scanf("%d", &opcion);
+    
     switch(opcion){
         case 1:
-          printf ("\nTiene el turno &i", *Pila->top);
+          push ();
           break;
+          printf ("\nTiene el turno &i", pila->tope);
         case 2:
+          pop ();
           printf ("\nTenga buen dia\n\n");
           return 0;
         default:
-    printf("Opción no válida.");
+          printf("Opción no válida.");
     }
- }
+        
+    return 0;
+}
+/*
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TAM 10
+
+int pila[TAM+1]; // Pila de tamaño 11 (el índice 0 no se utiliza)
+
+void push(int dato) {
+    static int tope = 0;
+    if (tope >= TAM) {
+        printf("Error: la pila está llena\n");
+        exit(1);
+    }
+    pila[++tope] = dato;
+}
+
+int pop() {
+    static int tope = 1;
+    if (tope > TAM) {
+        printf("Error: la pila está vacía\n");
+        exit(1);
+    }
+    return pila[tope++];
+}
+
+void sacar_de_pila() {
+    int tope = 10;
+    
+    // Inicializar la pila
+    for (int i = 1; i <= TAM; i++) {
+        push(TAM - i + 1);
+    }
+    
+    // Sacar elementos de la pila
+    while (tope >= 2) {
+        int dato = pop();
+        printf("Elemento sacado: %d\n", dato);
+    }
+}
+
+int main() {
+    sacar_de_pila();
+    return 0;
+}*/
