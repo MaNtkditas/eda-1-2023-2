@@ -103,5 +103,5 @@ ax.set_ylabel("Comparisons")
 ax.grid(True)
 ax.legend()
 
-plt.title("Comparison of Sorting Algorithms")
+plt.title("Comparacion del rendimiento")
 plt.show()
