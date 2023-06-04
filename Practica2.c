@@ -97,7 +97,7 @@ int main() {
     scanf("%d", &opcion);
 
     // Validar opción ingresada
-    if (opcion < 1 || opcion > 2/*4*/) {
+    if (opcion < 1 || opcion > 2) {
         printf("Opción inválida.\n");
         return 0;
     }
