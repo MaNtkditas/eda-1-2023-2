@@ -95,6 +95,24 @@ void movimientosTorre(int tablero[BOARD_SIZE][BOARD_SIZE], int fila, int columna
     }
 }
 
+// Función para calcular los movimientos del caballo
+void movimientosCaballo(int tablero[BOARD_SIZE][BOARD_SIZE], int fila, int columna) {
+    char pieza = 'C';  // Caballo
+
+    int movimientosFila[] = {-2, -2, -1, -1, 1, 1, 2, 2};
+    int movimientosColumna[] = {-1, 1, -2, 2, -2, 2, -1, 1};
+
+    for (int i = 0; i < 8; i++) {
+        int nuevaFila = fila + movimientosFila[i];
+        int nuevaColumna = columna + movimientosColumna[i];
+
+        // Verificar si el movimiento está dentro del tablero
+        if (nuevaFila >= 0 && nuevaFila < BOARD_SIZE && nuevaColumna >= 0 && nuevaColumna < BOARD_SIZE) {
+            marcarMovimiento(tablero, nuevaFila, nuevaColumna, pieza);
+        }
+    }
+}
+
 int main() {
     int tablero[BOARD_SIZE][BOARD_SIZE];
 
@@ -110,7 +128,7 @@ int main() {
     char pieza;
 
     // Pedir al usuario la posición de la pieza
-    printf ("\nEn que posicion quieres empezar: ");
+    printf("\nEn qué posición quieres empezar: ");
     printf("\n\tFila (1-%d): ", BOARD_SIZE);
     scanf("%d", &fila);
     printf("\tColumna (1-%d): ", BOARD_SIZE);
@@ -123,17 +141,18 @@ int main() {
     }
 
     // Pedir al usuario la pieza de ajedrez
-    printf("Elija la pieza de ajedrez:\n");
-    printf("1. Rey\n");
-    printf("2. Reina\n");
-    printf("3. Alfil\n");
-    printf("4. Torre\n");
+    printf("Elige la pieza de ajedrez:\n");
+    printf("1- Rey\n");
+    printf("2- Reina\n");
+    printf("3- Alfil\n");
+    printf("4- Torre\n");
+    printf("5- Caballo\n");
     int opcion;
-    printf ("-> ");
+    printf("-> ");
     scanf("%d", &opcion);
 
     // Validar opción ingresada
-    if (opcion < 1 || opcion > 4) {
+    if (opcion < 1 || opcion > 5) {
         printf("Opción inválida.\n");
         return 0;
     }
@@ -155,6 +174,9 @@ int main() {
         case 4:
             movimientosTorre(tablero, fila - 1, columna - 1);
             break;
+        case 5:
+            movimientosCaballo(tablero, fila - 1, columna - 1);
+            break;
     }
 
     // Imprimir el tablero con los movimientos posibles
@@ -162,3 +184,4 @@ int main() {
 
     return 0;
 }
+
