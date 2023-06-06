@@ -1,115 +1,119 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+struct Node {
     int data;
     struct Node* next;
-} Node;
+};
 
-typedef struct CircularLinkedList {
-    Node* head;
-} CircularLinkedList;
-
-// Función para crear una nueva lista ligada circular
-CircularLinkedList* createCircularLinkedList() {
-    CircularLinkedList* list = (CircularLinkedList*)malloc(sizeof(CircularLinkedList));
-    list->head = NULL;
-    return list;
-}
-
-// Función para insertar un elemento al final de la lista
-void insertAtEnd(CircularLinkedList* list, int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->data = data;
-
-    if (list->head == NULL) {
-        newNode->next = newNode;
-        list->head = newNode;
-    } else {
-        newNode->next = list->head;
-        Node* current = list->head;
-        while (current->next != list->head) {
-            current = current->next;
-        }
-        current->next = newNode;
-    }
-}
-
-// Función para buscar un elemento en la lista
-int searchElement(CircularLinkedList* list, int value) {
-    if (list->head == NULL) {
+int search(struct Node* last, int term) {
+    if (last == NULL) {
+        printf("La lista está vacía.\n");
         return 0;
     }
 
-    Node* current = list->head;
+    struct Node* p = last->next;
+    int index = 1;
     do {
-        if (current->data == value) {
+        if (p->data == term) {
+            printf("El término %d se encontró en la posición %d.\n", term, index);
             return 1;
         }
-        current = current->next;
-    } while (current != list->head);
+        p = p->next;
+        index++;
+    } while (p != last->next);
 
+    printf("El término %d no se encontró en la lista.\n", term);
     return 0;
 }
 
-// Función para imprimir los elementos de la lista
-void printList(CircularLinkedList* list) {
-    if (list->head == NULL) {
-        printf("La lista está vacía.\n");
-        return;
-    }
+struct Node* addToEmpty(struct Node* last, int data) {
+    if (last != NULL) return last;
 
-    Node* current = list->head;
-    printf("Elementos en la lista: ");
-    do {
-        printf("%d ", current->data);
-        current = current->next;
-    } while (current != list->head);
-    printf("\n");
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    last = newNode;
+    last->next = last;
+
+    return last;
 }
 
-// Función para liberar la memoria ocupada por la lista
-void freeList(CircularLinkedList* list) {
-    if (list->head == NULL) {
-        free(list);
+struct Node* addFont(struct Node* last, int data) {
+    if (last == NULL) return addToEmpty(last, data);
+
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = last->next;
+    last->next = newNode;
+
+    return last;
+}
+
+struct Node* addEnd(struct Node* last, int data) {
+    if (last == NULL) return addToEmpty(last, data);
+
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = last->next;
+    last->next = newNode;
+    last = newNode;
+
+    return last;
+}
+
+struct Node* addAfter(struct Node* last, int data, int item) {
+    if (last == NULL) return NULL;
+
+    struct Node* newNode, *p;
+    p = last->next;
+
+    do {
+        if (p->data == item) {
+            newNode = (struct Node*)malloc(sizeof(struct Node));
+            newNode->data = data;
+            newNode->next = p->next;
+            p->next = newNode;
+
+            return last;
+        }
+
+        p = p->next;
+    } while (p != last->next);
+
+    printf("\nEl nodo dado no está presente en la lista.\n");
+    return last;
+}
+
+void traverse(struct Node* last) {
+    struct Node* p;
+
+    if (last == NULL) {
+        printf("\nLa lista está vacía.\n");
         return;
     }
 
-    Node* current = list->head;
-    Node* nextNode;
-
+    p = last->next;
     do {
-        nextNode = current->next;
-        free(current);
-        current = nextNode;
-    } while (current != list->head);
-
-    free(list);
+        printf(" %d", p->data);
+        p = p->next;
+    } while (p != last->next);
 }
 
 int main() {
-    CircularLinkedList* list = createCircularLinkedList();
+    struct Node* last = NULL;
 
-    // Valores asignados previamente a la lista
-    insertAtEnd(list, 1);
-    insertAtEnd(list, 2);
-    insertAtEnd(list, 3);
-    insertAtEnd(list, 4);
-    insertAtEnd(list, 5);
+    last = addToEmpty(last, 6);
+    last = addEnd(last, 8);
+    last = addFont(last, 2);
 
-    int searchValue;
-    printf("Ingrese un valor para buscar en la lista: ");
-    scanf("%d", &searchValue);
+    last = addAfter(last, 10, 2);
 
-    if (searchElement(list, searchValue)) {
-        printf("Se encontró el elemento en la estructura.\n");
-    } else {
-        printf("El elemento no se encuentra en la estructura.\n");
-    }
+    traverse(last);
 
-    printList(list);
-
-    freeList(list);
+    int term;
+    printf("\nIngrese el término que desea buscar: ");
+    scanf("%d", &term);
+    search(last, term);
 
     return 0;
 }
