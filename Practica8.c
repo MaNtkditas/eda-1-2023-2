@@ -1,178 +1,189 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+struct Node {
     int data;
-    struct Node* prev;
     struct Node* next;
-} Node;
+};
 
-typedef struct DoublyLinkedList {
-    Node* head;
-} DoublyLinkedList;
+struct Node* addToEmpty(struct Node* last, int data) {
+    if (last != NULL) return last;
 
-// Función para crear una nueva lista ligada doble circular
-DoublyLinkedList* createDoublyLinkedList() {
-    DoublyLinkedList* list = (DoublyLinkedList*)malloc(sizeof(DoublyLinkedList));
-    list->head = NULL;
-    return list;
-}
+    // Asignar memoria al nuevo nodo
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 
-// Función para insertar un elemento al inicio de la lista
-void insertAtBeginning(DoublyLinkedList* list, int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
+    // Asignar dato al nuevo nodo
     newNode->data = data;
 
-    if (list->head == NULL) {
-        newNode->prev = newNode;
-        newNode->next = newNode;
-        list->head = newNode;
-    } else {
-        Node* lastNode = list->head->prev;
-        newNode->prev = lastNode;
-        newNode->next = list->head;
-        list->head->prev = newNode;
-        lastNode->next = newNode;
-        list->head = newNode;
-    }
+    // Asignar como last al nuevo nodo
+    last = newNode;
+
+    // Crear enlace a sí mismo
+    last->next = last;
+
+    return last;
 }
 
-// Función para insertar un elemento al final de la lista
-void insertAtEnd(DoublyLinkedList* list, int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
+struct Node* addFront(struct Node* last, int data) {
+    // Revisar si la lista está vacía
+    if (last == NULL) return addToEmpty(last, data);
+
+    // Asignar memoria al nuevo nodo
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+
+    // Agregar dato al nuevo nodo
     newNode->data = data;
 
-    if (list->head == NULL) {
-        newNode->prev = newNode;
-        newNode->next = newNode;
-        list->head = newNode;
-    } else {
-        Node* lastNode = list->head->prev;
-        newNode->prev = lastNode;
-        newNode->next = list->head;
-        list->head->prev = newNode;
-        lastNode->next = newNode;
-    }
+    // Guardar la dirección del nodo siguiente al nodo actual en el nuevo nodo
+    newNode->next = last->next;
+
+    // Hacer al nuevo nodo como la cabeza
+    last->next = newNode;
+
+    return last;
 }
 
-// Función para eliminar un elemento de la lista
-void deleteNode(DoublyLinkedList* list, int data) {
-    if (list->head == NULL) {
-        printf("La lista está vacía.\n");
-        return;
-    }
+struct Node* addEnd(struct Node* last, int data) {
+    // Revisar si el nodo está vacío
+    if (last == NULL) return addToEmpty(last, data);
 
-    Node* current = list->head;
-    Node* previous = NULL;
+    // Asignar memoria al nuevo nodo
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 
-    while (current->next != list->head) {
-        if (current->data == data) {
-            if (previous == NULL) {
-                list->head = current->next;
+    // Agregar dato al nuevo nodo
+    newNode->data = data;
+
+    // Almacenar la dirección del nodo cabeza al siguiente del nuevo nodo
+    newNode->next = last->next;
+
+    // Apuntar el actual último nodo al nuevo nodo
+    last->next = newNode;
+
+    // Hacer al nuevo nodo como el último nodo
+    last = newNode;
+
+    return last;
+}
+
+struct Node* addAfter(struct Node* last, int data, int item) {
+    // Revisar si la lista está vacía
+    if (last == NULL) return NULL;
+
+    struct Node* newNode, *p;
+    p = last->next;
+
+    do {
+        // Si se encontró el elemento, colocar el nuevo nodo después de él
+        if (p->data == item) {
+            // Asignar memoria al nuevo nodo
+            newNode = (struct Node*)malloc(sizeof(struct Node));
+
+            // Agregar dato al nuevo nodo
+            newNode->data = data;
+
+            // Hacer que el siguiente nodo del nuevo nodo sea el nodo siguiente del actual
+            newNode->next = p->next;
+
+            // Hacer al nuevo nodo como el siguiente del nodo actual
+            p->next = newNode;
+
+            if (p == last) {
+                last = newNode;
             }
-            current->prev->next = current->next;
-            current->next->prev = current->prev;
-            free(current);
-            printf("Elemento eliminado.\n");
-            return;
-        }
-        previous = current;
-        current = current->next;
-    }
 
-    if (current->data == data) {
-        if (previous == NULL) {
-            list->head = NULL;
+            return last;
         }
-        current->prev->next = current->next;
-        current->next->prev = current->prev;
-        free(current);
-        printf("Elemento eliminado.\n");
-        return;
-    }
 
-    printf("El elemento no existe en la lista.\n");
+        p = p->next;
+
+    } while (p != last->next);
+
+    printf("\nEl nodo dado no está presente en la lista");
+    return last;
 }
 
-// Función para imprimir los elementos de la lista
-void printList(DoublyLinkedList* list) {
-    if (list->head == NULL) {
-        printf("La lista está vacía.\n");
+void deleteNode(struct Node** last, int key) {
+    // Si la lista ligada está vacía
+    if (*last == NULL) return;
+
+    // Si la lista contiene solo un nodo
+    if ((*last)->data == key && (*last)->next == *last) {
+        free(*last);
+        *last = NULL;
         return;
     }
 
-    Node* current = list->head;
+    struct Node* temp = *last, *d;
 
-    do {
-        printf("%d ", current->data);
-        current = current->next;
-    } while (current != list->head);
+    // Si se va a eliminar el último nodo
+    if ((*last)->data == key) {
+        // Encontrar el nodo antes del último nodo
+        while (temp->next != *last) temp = temp->next;
 
-    printf("\n");
+        // Apuntar el nodo temporal al siguiente del último, es decir, al primer nodo
+        temp->next = (*last)->next;
+        free(*last);
+        *last = temp->next;
+    }
+
+    // Recorrer el nodo que va a ser eliminado
+    while (temp->next != *last && temp->next->data != key) {
+        temp = temp->next;
+    }
+
+    // Si el nodo a eliminar se encuentra
+    if (temp->next->data == key) {
+        d = temp->next;
+        temp->next = d->next;
+        free(d);
+    }
 }
 
-// Función para liberar la memoria ocupada por la lista
-void freeList(DoublyLinkedList* list) {
-    if (list->head == NULL) {
-        free(list);
+void traverse(struct Node* last) {
+    struct Node* p;
+
+    if (last == NULL) {
+        printf("\nLa lista está vacía");
         return;
     }
 
-    Node* current = list->head;
-
+    p = last->next;
     do {
-        Node* temp = current;
-        current = current->next;
-        free(temp);
-    } while (current != list->head);
-
-    free(list);
+        printf(" %d", p->data);
+        p = p->next;
+    } while (p != last->next);
 }
 
 int main() {
-    DoublyLinkedList* list = createDoublyLinkedList();
+    struct Node* last = NULL;
 
-    int option, data;
-    while (1) {
-        printf("Seleccione una opción:\n");
-        printf("1. Insertar elemento al inicio\n");
-        printf("2. Insertar elemento al final\n");
-        printf("3. Eliminar elemento\n");
-        printf("4. Imprimir lista\n");
-        printf("5. Salir\n");
-        scanf("%d", &option);
+    last = addToEmpty(last, 6);
+    last = addEnd(last, 8);
+    last = addFront(last, 2);
 
-        switch (option) {
-            case 1:
-                printf("Ingrese el elemento a insertar: ");
-                scanf("%d", &data);
-                insertAtBeginning(list, data);
-                printf("Elemento insertado al inicio.\n");
-                break;
-            case 2:
-                printf("Ingrese el elemento a insertar: ");
-                scanf("%d", &data);
-                insertAtEnd(list, data);
-                printf("Elemento insertado al final.\n");
-                break;
-            case 3:
-                printf("Ingrese el elemento a eliminar: ");
-                scanf("%d", &data);
-                deleteNode(list, data);
-                break;
-            case 4:
-                printf("Elementos en la lista: ");
-                printList(list);
-                break;
-            case 5:
-                freeList(list);
-                printf("Programa finalizado.\n");
-                return 0;
-            default:
-                printf("Opción inválida. Intente nuevamente.\n");
-                break;
-        }
+    last = addAfter(last, 10, 2);
 
-        printf("\n");
-    }
+    traverse(last);
+
+    // Agregar un número
+    int numToAdd;
+    printf("\nIngrese un número para agregar a la lista: ");
+    scanf("%d", &numToAdd);
+    last = addEnd(last, numToAdd);
+
+    traverse(last);
+
+    // Eliminar un número
+    int numToDelete;
+    printf("\nIngrese el número a eliminar de la lista: ");
+    scanf("%d", &numToDelete);
+    deleteNode(&last, numToDelete);
+
+    traverse(last);
+
+    printf ("\n");
+
+    return 0;
 }
+
+
