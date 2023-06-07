@@ -165,23 +165,37 @@ int main() {
 
     traverse(last);
 
-    // Agregar un número
-    int numToAdd;
-    printf("\nIngrese un número para agregar a la lista: ");
-    scanf("%d", &numToAdd);
-    last = addEnd(last, numToAdd);
+    int choice;
+    int num;
 
-    traverse(last);
+    do {
+        printf("\n\n1. Agregar un término");
+        printf("\n2. Eliminar un término");
+        printf("\n3. Salir");
+        printf("\nIngrese su elección: ");
+        scanf("%d", &choice);
 
-    // Eliminar un número
-    int numToDelete;
-    printf("\nIngrese el número a eliminar de la lista: ");
-    scanf("%d", &numToDelete);
-    deleteNode(&last, numToDelete);
-
-    traverse(last);
-
-    printf ("\n");
+        switch (choice) {
+            case 1:
+                printf("\nIngrese un número para agregar a la lista: ");
+                scanf("%d", &num);
+                last = addEnd(last, num);
+                traverse(last);
+                break;
+            case 2:
+                printf("\nIngrese el número a eliminar de la lista: ");
+                scanf("%d", &num);
+                deleteNode(&last, num);
+                traverse(last);
+                break;
+            case 3:
+                printf("\nSaliendo del programa...\n");
+                break;
+            default:
+                printf("\nOpción no válida. Por favor, ingrese una opción válida.\n");
+                break;
+        }
+    } while (choice != 3);
 
     return 0;
 }
